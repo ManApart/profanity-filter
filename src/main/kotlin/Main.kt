@@ -6,29 +6,28 @@ import java.util.*
 
 private const val inputFile = "./src/main/resources/test.txt"
 
-private val swears = parseSwears()
 
 fun main(){
-    cleanFile(inputFile)
+    val swears = File(swearsFile).readText().parseSwears()
+    cleanFile(inputFile, swears)
 }
 
-private fun parseSwears(): List<Regex>{
-    val text = File(swearsFile).readText()
-    return String(Base64.getDecoder().decode(text))
+fun String.parseSwears(): List<Regex>{
+    return this.decode()
         .split("\n")
         .flatMap { listOf(it, "${it}ed", "${it}s", "${it}ing") }
             //case insensitive
         .map { Regex("(?i) $it ") }
 }
 
-fun cleanFile(path: String) {
+fun cleanFile(path: String, swears: List<Regex>) {
     val text = File(path).readText()
-    val cleaned = cleanText(text)
+    val cleaned = text.clean(swears)
     File("./out/$path").also { it.parentFile.mkdirs() }.writeText(cleaned)
 }
 
-fun cleanText(text: String): String {
-    var newText = text
+fun String.clean(swears: List<Regex>): String {
+    var newText = this
     swears.forEach { swear ->
         newText = newText.replace(swear, " ")
     }
