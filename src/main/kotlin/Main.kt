@@ -19,7 +19,6 @@ private fun parseSwears(): List<Regex>{
         .flatMap { listOf(it, "${it}ed", "${it}s", "${it}ing") }
             //case insensitive
         .map { Regex("(?i) $it ") }
-//        .map { Regex("\b(?i)$it\b") }
 }
 
 fun cleanFile(path: String) {
