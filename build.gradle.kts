@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch.url
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -9,9 +10,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven(url = "https://github.com/psiegman/mvn-repo/raw/master/releases")
 }
 
 dependencies {
+    implementation("nl.siegmann.epublib:epublib-core:3.1") {
+        exclude("xmlpull")
+    }
     testImplementation(kotlin("test"))
 }
 

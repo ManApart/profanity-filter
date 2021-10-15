@@ -1,7 +1,7 @@
 import java.io.File
 import java.util.*
 
-private const val encode = false
+private const val encode = true
 private const val base = "./src/main/resources/profanity-base.txt"
 const val swearsFile = "./src/main/resources/profanity.txt"
 

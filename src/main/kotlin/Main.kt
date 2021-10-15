@@ -1,29 +1,52 @@
+import nl.siegmann.epublib.epub.EpubReader
+import nl.siegmann.epublib.epub.EpubWriter
+import nl.siegmann.epublib.util.IOUtil.toByteArray
 import java.io.File
-import java.util.*
 
-//TODO pass in string, file or files
 //TODO - use coroutines for per file replacements (or chunk text)
 
-private const val inputFile = "./src/main/resources/test.txt"
+//private const val inputFile = "./src/main/resources/test.txt"
+private const val inputFile = "./src/main/resources/sample.epub"
 
 
-fun main(){
+fun main() {
     val swears = File(swearsFile).readText().parseSwears()
-    cleanFile(inputFile, swears)
+    val sourceFile = File(inputFile)
+    val outFile = File("./out/${sourceFile.path}").also { it.parentFile.mkdirs() }
+    cleanFile(sourceFile, outFile, swears)
 }
 
-fun String.parseSwears(): List<Regex>{
+private fun cleanFile(file: File, outFile: File, swears: List<Regex>) {
+    when {
+        file.path.endsWith(".epub") -> cleanBook(file, outFile, swears)
+        file.path.endsWith(".txt") -> cleanTextFile(file, outFile, swears)
+        file.isDirectory -> file.listFiles()!!.forEach { cleanFile(it, outFile, swears) }
+        else -> println("Unable to clean file ${file.path}")
+    }
+}
+
+fun String.parseSwears(): List<Regex> {
     return this.decode()
         .split("\n")
         .flatMap { listOf(it, "${it}ed", "${it}s", "${it}ing") }
-            //case insensitive
+        //case insensitive
         .map { Regex("(?i) $it ") }
 }
 
-fun cleanFile(path: String, swears: List<Regex>) {
-    val text = File(path).readText()
+private fun cleanBook(file: File, outFile: File, swears: List<Regex>) {
+    val book = EpubReader().readEpub(file.inputStream())
+
+    book.contents.forEach { chapter ->
+        chapter.data = chapter.reader.readText().clean(swears).toByteArray()
+    }
+
+    EpubWriter().write(book, outFile.outputStream())
+}
+
+private fun cleanTextFile(file: File, outFile: File, swears: List<Regex>) {
+    val text = file.readText()
     val cleaned = text.clean(swears)
-    File("./out/$path").also { it.parentFile.mkdirs() }.writeText(cleaned)
+    outFile.writeText(cleaned)
 }
 
 fun String.clean(swears: List<Regex>): String {
