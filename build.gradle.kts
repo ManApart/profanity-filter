@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch.url
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,9 +10,11 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven(url = "https://github.com/psiegman/mvn-repo/raw/master/releases")
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
+    implementation("com.github.h0tk3y:regex-dsl:v0.1")
     implementation("nl.siegmann.epublib:epublib-core:3.1") {
         exclude("xmlpull")
     }
@@ -24,6 +25,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }

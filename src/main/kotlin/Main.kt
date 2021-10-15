@@ -1,6 +1,6 @@
+import com.github.h0tk3y.regexDsl.regex
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
-import nl.siegmann.epublib.util.IOUtil.toByteArray
 import java.io.File
 
 //TODO - use coroutines for per file replacements (or chunk text)
@@ -29,8 +29,16 @@ fun String.parseSwears(): List<Regex> {
     return this.decode()
         .split("\n")
         .flatMap { listOf(it, "${it}ed", "${it}s", "${it}ing") }
-        //case insensitive
-        .map { Regex("(?i) $it ") }
+        .map { buildRegex(it) }
+}
+
+private fun buildRegex(word: String): Regex {
+//    return Regex("(?i) $word ")
+    return regex {
+        optional { anyOf(" ", "\n") }
+        literally(word)
+        1 times { anyOf(" ", "\n", ".") }
+    }
 }
 
 private fun cleanBook(file: File, outFile: File, swears: List<Regex>) {
