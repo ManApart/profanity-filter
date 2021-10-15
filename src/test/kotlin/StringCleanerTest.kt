@@ -23,7 +23,7 @@ class StringCleanerTest {
     fun endNewline(){
         val swears = swears("love")
         val dirty = "a story of love\n"
-        val expected = "a story of \n"
+        val expected = "a story of\n"
         assertEquals(expected, dirty.clean(swears))
     }
 
@@ -31,7 +31,7 @@ class StringCleanerTest {
     fun endPeriod(){
         val swears = swears("love")
         val dirty = "a story of love."
-        val expected = "a story of ."
+        val expected = "a story of."
         assertEquals(expected, dirty.clean(swears))
     }
 
@@ -47,7 +47,7 @@ class StringCleanerTest {
     fun startNewline(){
         val swears = swears("love")
         val dirty = "a story of love\n a story of hate"
-        val expected = "a story of \n a story of hate"
+        val expected = "a story of\n a story of hate"
         assertEquals(expected, dirty.clean(swears))
     }
 

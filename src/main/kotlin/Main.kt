@@ -1,4 +1,3 @@
-import com.github.h0tk3y.regexDsl.regex
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import java.io.File
@@ -33,12 +32,12 @@ fun String.parseSwears(): List<Regex> {
 }
 
 private fun buildRegex(word: String): Regex {
-//    return Regex("(?i) $word ")
-    return regex {
-        optional { anyOf(" ", "\n") }
-        literally(word)
-        1 times { anyOf(" ", "\n", ".") }
-    }
+    /*
+    Starts with none to one new lines or spaces
+    Has the word
+    Ends with a space, newline, or period
+     */
+    return Regex("[ \n]?(?i)$word(?=[. \n])")
 }
 
 private fun cleanBook(file: File, outFile: File, swears: List<Regex>) {
@@ -60,7 +59,7 @@ private fun cleanTextFile(file: File, outFile: File, swears: List<Regex>) {
 fun String.clean(swears: List<Regex>): String {
     var newText = this
     swears.forEach { swear ->
-        newText = newText.replace(swear, " ")
+        newText = newText.replace(swear, "")
     }
     return newText
 }
