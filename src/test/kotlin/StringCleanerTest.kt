@@ -20,6 +20,14 @@ class StringCleanerTest {
     }
 
     @Test
+    fun wordPartEnd(){
+        val swears = swears("love")
+        val dirty = "dumblove"
+        val expected = "dumblove"
+        assertEquals(expected, dirty.clean(swears))
+    }
+
+    @Test
     fun endNewline(){
         val swears = swears("love")
         val dirty = "a story of love\n"
@@ -36,6 +44,14 @@ class StringCleanerTest {
     }
 
     @Test
+    fun endHTML(){
+        val swears = swears("love")
+        val dirty = "a story of love<"
+        val expected = "a story of<"
+        assertEquals(expected, dirty.clean(swears))
+    }
+
+    @Test
     fun startString(){
         val swears = swears("love")
         val dirty = "love stars"
@@ -44,10 +60,26 @@ class StringCleanerTest {
     }
 
     @Test
+    fun endString(){
+        val swears = swears("love")
+        val dirty = "starry love"
+        val expected = "starry"
+        assertEquals(expected, dirty.clean(swears))
+    }
+
+    @Test
     fun startNewline(){
         val swears = swears("love")
         val dirty = "a story of love\n a story of hate"
         val expected = "a story of\n a story of hate"
+        assertEquals(expected, dirty.clean(swears))
+    }
+
+    @Test
+    fun startHTML(){
+        val swears = swears("love")
+        val dirty = ">love in the moonlight"
+        val expected = "> in the moonlight"
         assertEquals(expected, dirty.clean(swears))
     }
 

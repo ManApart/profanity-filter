@@ -3,3 +3,4 @@
 out/
 build/
 profanity-base.txt
+./src/main/resources/out/
