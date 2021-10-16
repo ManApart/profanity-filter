@@ -18,7 +18,7 @@ private fun cleanFile(file: File, root: String, swears: List<Regex>) {
         file.path.endsWith(".epub") -> cleanBook(file, root, swears)
         file.path.endsWith(".txt") -> cleanTextFile(file, root, swears)
         file.isDirectory -> cleanDirectory(file, root, swears)
-        else -> println("Unable to clean file ${file.path}")
+        else -> println("Skipping ${file.path}")
     }
 }
 
