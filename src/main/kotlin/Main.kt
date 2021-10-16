@@ -1,5 +1,3 @@
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import nl.siegmann.epublib.epub.EpubReader
@@ -12,27 +10,25 @@ fun main() {
     val swears = File(swearsFile).readText().parseSwears()
     val sourceFile = File(inputPath)
     val root = if (sourceFile.isDirectory) sourceFile.path else sourceFile.parentFile.path
-    runBlocking {
-        launch {
-            cleanFile(this, sourceFile, root, swears)
-        }
-    }
+    cleanFile(sourceFile, root, swears)
 }
 
-private suspend fun cleanFile(scope: CoroutineScope, file: File, root: String, swears: List<Regex>) {
+private fun cleanFile(file: File, root: String, swears: List<Regex>) {
     when {
         file.path.endsWith(".epub") -> cleanBook(file, root, swears)
         file.path.endsWith(".txt") -> cleanTextFile(file, root, swears)
-        file.isDirectory -> cleanDirectory(scope, file, root, swears)
+        file.isDirectory -> cleanDirectory(file, root, swears)
         else -> println("Unable to clean file ${file.path}")
     }
 }
 
-private suspend fun cleanDirectory(scope: CoroutineScope, file: File, root: String, swears: List<Regex>) {
+private fun cleanDirectory(file: File, root: String, swears: List<Regex>) {
     if (file.path == "$root\\out") return
-    file.listFiles()!!.forEach { file ->
-        scope.async {
-            cleanFile(scope, file, root, swears)
+    runBlocking {
+        file.listFiles()!!.forEach { file ->
+            launch {
+                cleanFile(file, root, swears)
+            }
         }
     }
 }
@@ -64,8 +60,12 @@ private fun cleanBook(file: File, root: String, swears: List<Regex>) {
     println("Cleaning ${file.path}")
     val book = EpubReader().readEpub(file.inputStream())
 
-    book.contents.forEach { chapter ->
-        chapter.data = chapter.reader.readText().clean(swears).toByteArray()
+    runBlocking {
+        book.contents.forEach { chapter ->
+            launch {
+                chapter.data = chapter.reader.readText().clean(swears).toByteArray()
+            }
+        }
     }
 
     EpubWriter().write(book, createOutFile(file, root).outputStream())
