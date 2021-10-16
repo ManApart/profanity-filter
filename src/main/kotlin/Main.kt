@@ -1,4 +1,5 @@
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import nl.siegmann.epublib.epub.EpubReader
@@ -30,7 +31,7 @@ private suspend fun cleanFile(scope: CoroutineScope, file: File, root: String, s
 private suspend fun cleanDirectory(scope: CoroutineScope, file: File, root: String, swears: List<Regex>) {
     if (file.path == "$root\\out") return
     file.listFiles()!!.forEach { file ->
-        scope.launch {
+        scope.async {
             cleanFile(scope, file, root, swears)
         }
     }
@@ -51,7 +52,7 @@ private fun buildRegex(word: String): List<Regex> {
         Has the word
         Ends with a space, newline, period or <
          */
-        Regex("(?<=>)?[ \n]?(?i)$word(?=[. \n<])"),
+        Regex("(?<=>)?[ \n]?(?i)$word(?=[^a-zA-Z])"),
         /*
         Same as above but match end of string instead.
          */
