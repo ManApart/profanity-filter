@@ -48,11 +48,13 @@ private fun buildRegex(word: String): List<Regex> {
         Has the word
         Ends with a space, newline, period or <
          */
-        Regex("(?<=>)?[ \n]?(?i)$word(?=[^a-zA-Z])"),
-        /*
-        Same as above but match end of string instead.
-         */
-        Regex("[ \n>](?i)$word$")
+        Regex("(?<=>)?[ \n](?i)$word(?=[^a-zA-Z])"),
+        //End of string
+        Regex("[ \n>](?i)$word$"),
+        //Start of String
+        Regex("^(?i)$word(?=[^a-zA-Z])"),
+        //Start of html
+        Regex("(?<=>)(?i)$word(?=[^a-zA-Z])")
     )
 }
 

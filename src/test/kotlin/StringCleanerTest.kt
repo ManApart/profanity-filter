@@ -44,6 +44,14 @@ class StringCleanerTest {
     }
 
     @Test
+    fun endPeriodPart(){
+        val swears = swears("love")
+        val dirty = "a story of dumblove."
+        val expected = "a story of dumblove."
+        assertEquals(expected, dirty.clean(swears))
+    }
+
+    @Test
     fun endComma(){
         val swears = swears("love")
         val dirty = "a story of love,"
